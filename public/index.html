@@ -4,8 +4,12 @@
   <title>Express</title>
   <link rel="stylesheet" href="/stylesheets/style.css">
 
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.css" integrity="sha512-UkezATkM8unVC0R/Z9Kmq4gorjNoFwLMAWR/1yZpINW08I79jEKx/c8NlLSvvimcu7SL8pgeOnynxfRpe+5QpA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw-src.css" integrity="sha512-vJfMKRRm4c4UupyPwGUZI8U651mSzbmmPgR3sdE3LcwBPsdGeARvUM5EcSTg34DK8YIRiIo+oJwNfZPMKEQyug==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.css"
+    integrity="sha512-UkezATkM8unVC0R/Z9Kmq4gorjNoFwLMAWR/1yZpINW08I79jEKx/c8NlLSvvimcu7SL8pgeOnynxfRpe+5QpA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw-src.css"
+    integrity="sha512-vJfMKRRm4c4UupyPwGUZI8U651mSzbmmPgR3sdE3LcwBPsdGeARvUM5EcSTg34DK8YIRiIo+oJwNfZPMKEQyug=="
+    crossorigin="anonymous" referrerpolicy="no-referrer" />
 </head>
 
 <!-- Library Leaflet & Leaflet draw CSS/JS-->
@@ -22,39 +26,50 @@
 
   </ul>
 
-  <button  type="Button" onClick="">Download GeoJSON</button>
+  <button type="button" onClick="saveToDB()">Download GeoJSON</button>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.js" integrity="sha512-KMraOVM0qMVE0U1OULTpYO4gg5MZgazwPAPyMQWfOkEshpwlLQFCHZ/0lBXyviDNVL+pBGwmeXQnuvGK8Fscvg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.2/leaflet.js"
+    integrity="sha512-KMraOVM0qMVE0U1OULTpYO4gg5MZgazwPAPyMQWfOkEshpwlLQFCHZ/0lBXyviDNVL+pBGwmeXQnuvGK8Fscvg=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet.draw/1.0.4/leaflet.draw.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js"
+    integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA=="
+    crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
   <script>
     fetch('/api/geojson')
-        .then(data => {
-          // console.log(data)
-            data.json().then(resp => {
-                resp.forEach((element, i) => {
-                    console.log(element)
-                    $('#listMisi').append(`<li>${i}, <a href="/api/geojson/delete/${i}">Hapus</a></li>`)
-                });
-            })
+      .then(data => {
+        // console.log(data)
+        data.json().then(resp => {
+          resp.forEach((element, i) => {
+            console.log(element)
+            $('#listMisi').append(`<li>${i}, <a href="/api/geojson/delete/${i}">Hapus</a></li>`)
+          });
         })
-    var map = L.map('map', {drawControl: true}).setView([-7.77016936669, 110.377996833], 13);
+      })
+    var map = L.map('map', { drawControl: true }).setView([-7.77016936669, 110.377996833], 13);
     L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
       attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
     }).addTo(map);
-     // FeatureGroup is to store editable layers
+    // FeatureGroup is to store editable layers
     var drawnItems = new L.FeatureGroup();
     // l-> isinya object yg kita gambar
 
-    map.on("draw:created", e =>{
+    map.on("draw:created", e => {
       drawnItems.addLayer(e.layer);
     })
 
     drawnItems.addTo(map);
 
-    function downloadGeoJSON(){
+    function downloadGeoJSON() {
 
+    }
+    function saveToDB() {
+      $.post(
+        '/api/geoJSON', {
+        geoJSON: JSON.stringify(drawnItems.toGeoJSON())
+      }
+      )
     }
   </script>
 </body>
